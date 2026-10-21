@@ -171,11 +171,20 @@ select, input[type=text], input[type=email], input[type=date], input[type=time],
 .toast[hidden] { display: none; }
 
 @media (max-width: 560px) {
-  .brand b { font-size: 21px; }
-  .btn-post { padding: 10px 12px; font-size: 13px; }
-  .btn-in { padding: 8px 10px; font-size: 13px; }
+  /* Phone header: logo and sign in on the first row, the post button full width underneath. */
+  .bar { position: static; }
+  .bar .wrap { flex-wrap: wrap; gap: 10px 12px; padding-block: 10px 12px; }
+  .brand { order: 1; flex: 1 1 auto; }
+  .brand svg { width: 24px; height: 21px; }
+  .brand b { font-size: 22px; }
+  .right { display: contents; }
+  .acct { order: 2; margin-left: auto; }
+  .btn-post { order: 3; flex: 1 1 100%; padding: 12px 14px; font-size: 15px; }
+  .btn-in { padding: 8px 14px; font-size: 14px; }
   .acct span { display: none; }
-  .right { gap: 10px; }
+  .intro { padding-block: 16px 4px; }
+  .frow { gap: 10px 12px; }
+  #area { min-width: 150px; }
   .grid2 { grid-template-columns: 1fr; }
   .dlg { padding: 18px; }
 }
