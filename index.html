@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Count Me In</title>
+<meta name="description" content="A wall of free local events. Pub quizzes, live music, games nights and park meetups. Say you're interested or going.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --font-body: "Figtree", "Segoe UI", system-ui, sans-serif;
+
+  --bg: #E3E8EF;
+  --paper: #FCFCFA;
+  --ink: #14181F;
+  --muted: #566170;
+  --line: #C6CEDA;
+  --accent: #2447F0;
+  --accent-ink: #FFFFFF;
+  --going: #11795A;
+  --going-ink: #FFFFFF;
+  --danger: #B3261E;
+  --shadow: rgba(20, 30, 50, .45);
+  --tape: rgba(110, 125, 150, .32);
+  --field: #FFFFFF;
+
+  --on-band: #14181F;
+  --band-quiz: #FFC93C;
+  --band-music: #FF7AA8;
+  --band-games: #63D69E;
+  --band-sport: #73B8FF;
+  --band-meetup: #4FD3D0;
+  --band-arts: #B9A0FF;
+  --band-food: #FF9E63;
+  --band-market: #D5E46A;
+  --band-other: #C9CFD9;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #11151C; --paper: #1D232D; --ink: #EDF0F5; --muted: #9BA6B6; --line: #334050;
+    --accent: #8197FF; --accent-ink: #0A0F22; --going: #4CCB9F; --going-ink: #04170F;
+    --danger: #FF8A80; --shadow: rgba(0, 0, 0, .8); --tape: rgba(255, 255, 255, .16); --field: #151A22;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 400 15px/1.45 var(--font-body);
+  min-height: 100vh;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Top bar */
+.bar { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top, 0px); }
+.bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand svg { flex: none; color: var(--accent); }
+.brand b { font: 800 26px/1 var(--font-display); letter-spacing: -.02em; white-space: nowrap; }
+.right { display: flex; align-items: center; gap: 14px; }
+.acct { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+.acct span { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.btn-post { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 6px; padding: 11px 16px; font-weight: 700; font-size: 14px; white-space: nowrap; }
+.btn-post:hover { filter: brightness(1.08); }
+
+.intro { padding-block: 22px 8px; }
+.intro h1 { font: 800 clamp(26px, 5vw, 42px)/1.05 var(--font-display); letter-spacing: -.025em; margin: 0 0 6px; text-wrap: balance; max-width: 18ch; }
+.intro p { margin: 0; color: var(--muted); max-width: 52ch; }
+
+/* Filters */
+.filters { display: grid; gap: 12px; padding-block: 14px 6px; }
+.frow { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.field-inline { display: flex; align-items: center; gap: 8px; }
+.field-inline label, .lbl { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+select, input[type=text], input[type=email], input[type=date], input[type=time], textarea { background: var(--field); border: 1px solid var(--line); border-radius: 6px; padding: 9px 10px; min-width: 0; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--field); }
+.seg button { border: 0; background: transparent; padding: 8px 12px; font-weight: 600; font-size: 14px; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); background: var(--field); border-radius: 999px; padding: 6px 12px 6px 9px; font-size: 14px; font-weight: 600; }
+.chip i { width: 10px; height: 10px; border-radius: 50%; background: var(--b, var(--muted)); flex: none; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.meta { display: flex; gap: 14px; align-items: center; color: var(--muted); font-size: 14px; padding-block: 6px 4px; min-height: 36px; }
+.link { background: none; border: 0; padding: 0; color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; font-size: inherit; }
+
+/* Wall */
+.wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 30px 22px; align-items: start; padding-block: 22px 56px; }
+.card { --b: var(--band-other); position: relative; display: flex; flex-direction: column; min-width: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 4px; transform: rotate(var(--rot, 0deg)); transition: transform .18s ease; box-shadow: 0 10px 20px -14px var(--shadow); }
+.card:hover { transform: rotate(0deg) translateY(-2px); }
+.card::before { content: ""; position: absolute; top: -10px; left: 50%; width: 70px; height: 20px; background: var(--tape); transform: translateX(-50%) rotate(-2.5deg); }
+.card[data-type="quiz"] { --b: var(--band-quiz); }
+.card[data-type="music"] { --b: var(--band-music); }
+.card[data-type="games"] { --b: var(--band-games); }
+.card[data-type="sport"] { --b: var(--band-sport); }
+.card[data-type="meetup"] { --b: var(--band-meetup); }
+.card[data-type="arts"] { --b: var(--band-arts); }
+.card[data-type="food"] { --b: var(--band-food); }
+.card[data-type="market"] { --b: var(--band-market); }
+.band { background: var(--b); color: var(--on-band); display: flex; justify-content: space-between; gap: 8px; padding: 9px 14px; font-size: 12px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; border-radius: 3px 3px 0 0; }
+.cbody { padding: 14px 14px 12px; display: grid; gap: 12px; min-width: 0; }
+.head { display: grid; grid-template-columns: auto 1fr; gap: 14px; min-width: 0; }
+.stub { text-align: center; min-width: 58px; padding-right: 14px; border-right: 2px dashed var(--line); display: grid; align-content: start; }
+.stub .dow, .stub .mon { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.stub .day { font: 800 36px/1 var(--font-display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.title { font: 800 21px/1.12 var(--font-display); letter-spacing: -.015em; margin: 0 0 6px; overflow-wrap: anywhere; text-wrap: balance; }
+.when { font-weight: 600; font-size: 14px; }
+.where { color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
+.desc { margin: 0; font-size: 14px; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.host { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 13px; color: var(--muted); }
+.host strong { color: var(--ink); font-weight: 600; overflow-wrap: anywhere; }
+.badge { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; font-size: 12px; font-weight: 600; }
+.badge.ok { border-color: var(--going); color: var(--going); }
+.free { font-weight: 800; }
+.acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tog { border: 1.5px solid var(--ink); background: transparent; border-radius: 6px; padding: 10px 8px; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 0; }
+.tog:hover { background: var(--field); }
+.tog.int[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.tog.go[aria-pressed="true"] { background: var(--going); border-color: var(--going); color: var(--going-ink); }
+.tog[disabled] { opacity: .6; cursor: default; }
+.counts { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; display: flex; gap: 14px; flex-wrap: wrap; }
+.counts b { color: var(--ink); }
+.foot { display: flex; flex-wrap: wrap; gap: 4px 14px; border-top: 1px solid var(--line); padding-top: 9px; }
+.foot button { background: none; border: 0; padding: 2px 0; font-size: 13px; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+.foot button.armed { color: var(--danger); font-weight: 700; }
+.flag { font-size: 12px; font-weight: 700; color: var(--danger); }
+
+.empty { grid-column: 1 / -1; max-width: 460px; padding: 28px 0; display: grid; gap: 10px; justify-items: start; }
+.empty h2 { margin: 0; font: 800 26px/1.1 var(--font-display); letter-spacing: -.02em; }
+.empty p { margin: 0; color: var(--muted); }
+.notice { margin-top: 10px; padding: 10px 12px; border: 1px solid var(--line); border-left: 4px solid var(--accent); background: var(--paper); font-size: 14px; }
+.notice.bad { border-left-color: var(--danger); }
+.how { border-top: 1px solid var(--line); padding-block: 22px 40px; color: var(--muted); font-size: 14px; display: grid; gap: 4px; }
+.how b { color: var(--ink); }
+
+/* Dialogs */
+.overlay { position: fixed; inset: 0; z-index: 40; background: rgba(8, 12, 20, .62); display: flex; justify-content: center; align-items: flex-start; overflow-y: auto; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.overlay[hidden] { display: none; }
+.dlg { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; width: 100%; max-width: 560px; padding: 22px; margin-block: auto; }
+.dlg h2 { margin: 0 0 4px; font: 800 26px/1.1 var(--font-display); letter-spacing: -.02em; }
+.dlg .sub { margin: 0 0 16px; color: var(--muted); font-size: 14px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fld { display: grid; gap: 5px; margin-bottom: 12px; min-width: 0; }
+.fld label { font-size: 13px; font-weight: 700; }
+.fld input, .fld select, .fld textarea { width: 100%; }
+.check { display: flex; gap: 10px; align-items: flex-start; margin: 4px 0 14px; font-size: 14px; }
+.check input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+.err { color: var(--danger); font-weight: 600; font-size: 14px; min-height: 20px; margin: 0 0 8px; }
+.dact { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+.btn2 { background: transparent; border: 1.5px solid var(--ink); border-radius: 6px; padding: 10px 16px; font-weight: 700; }
+.btn1 { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 6px; padding: 11px 18px; font-weight: 700; }
+.btn1[disabled] { opacity: .6; }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(18px, env(safe-area-inset-bottom, 0px)); z-index: 60; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 6px; font-weight: 600; font-size: 14px; max-width: calc(100% - 32px); }
+.toast[hidden] { display: none; }
+
+@media (max-width: 560px) {
+  .brand b { font-size: 21px; }
+  .btn-post { padding: 10px 12px; font-size: 13px; }
+  .acct span { display: none; }
+  .right { gap: 10px; }
+  .grid2 { grid-template-columns: 1fr; }
+  .dlg { padding: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card { transition: none; }
+  .card:hover { transform: rotate(var(--rot, 0deg)); }
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <div class="brand">
+      <svg width="30" height="26" viewBox="0 0 30 26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M5 3v20M11 3v20M17 3v20M23 3v20M1.5 19L27 7"/></svg>
+      <b>Count Me In</b>
+    </div>
+    <div class="right">
+      <div class="acct" id="acct"></div>
+      <button class="btn-post" id="open-post" type="button">I want to post an event</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>Free things happening near you</h1>
+    <p>Pub quizzes, live music, games nights, park meetups. Say you're interested, or tell people you'll be there.</p>
+  </section>
+
+  <section class="filters" aria-label="Filters">
+    <div class="frow">
+      <div class="field-inline"><label for="area">Where</label><select id="area"></select></div>
+      <div class="field-inline"><span class="lbl" id="when-lbl">When</span>
+        <div class="seg" role="group" aria-labelledby="when-lbl" id="when">
+          <button type="button" data-w="all" aria-pressed="true">Any day</button>
+          <button type="button" data-w="today" aria-pressed="false">Today</button>
+          <button type="button" data-w="week" aria-pressed="false">Next 7 days</button>
+        </div>
+      </div>
+    </div>
+    <div class="chips" id="types" role="group" aria-label="Event type"></div>
+  </section>
+
+  <div class="meta"><span id="count" aria-live="polite"></span><button class="link" id="clear" type="button" hidden>Clear filters</button></div>
+  <div id="notice"></div>
+  <section class="wall" id="wall" aria-label="Events wall"></section>
+
+  <section class="how">
+    <div><b>Free events only.</b> Anyone can post: venues, clubs, or one person with a football and a park.</div>
+    <div><b>Keeping it honest.</b> Venues can be marked Verified by the site team. Three reports take an event off the wall until it is reviewed.</div>
+  </section>
+</main>
+
+<!-- Post dialog -->
+<div class="overlay" id="overlay" hidden>
+  <form class="dlg" id="form" role="dialog" aria-modal="true" aria-labelledby="dlg-title" novalidate>
+    <h2 id="dlg-title">Post a free event</h2>
+    <p class="sub">It goes on the wall straight away. People can say they're interested or going.</p>
+    <div class="fld"><label for="f-title">Event name</label><input type="text" id="f-title" maxlength="80" placeholder="Thursday pub quiz" autocomplete="off"></div>
+    <div class="grid2">
+      <div class="fld"><label for="f-type">Type</label><select id="f-type"></select></div>
+      <div class="fld"><label for="f-area">Town or area</label><input type="text" id="f-area" list="area-list" maxlength="40" placeholder="Didsbury" autocomplete="off"><datalist id="area-list"></datalist></div>
+    </div>
+    <div class="grid2">
+      <div class="fld"><label for="f-date">Date</label><input type="date" id="f-date"></div>
+      <div class="fld"><label for="f-time">Start time</label><input type="time" id="f-time" value="19:00"></div>
+    </div>
+    <div class="fld"><label for="f-venue">Venue or meeting point</label><input type="text" id="f-venue" maxlength="80" placeholder="The Railway Arms, or the bandstand in the park" autocomplete="off"></div>
+    <div class="fld"><label for="f-desc">What's happening</label><textarea id="f-desc" rows="3" maxlength="400" placeholder="Teams of up to six, first round starts at 8."></textarea></div>
+    <div class="grid2">
+      <div class="fld"><label for="f-kind">You are</label><select id="f-kind">
+        <option value="venue">A pub, café or venue</option>
+        <option value="community">A club or community group</option>
+        <option value="person">Just me, organising informally</option>
+      </select></div>
+      <div class="fld"><label for="f-host">Name shown on the post</label><input type="text" id="f-host" maxlength="60" placeholder="The Railway Arms" autocomplete="off"></div>
+    </div>
+    <label class="check"><input type="checkbox" id="f-free"><span>This event is free to attend.</span></label>
+    <p class="err" id="f-err" role="alert"></p>
+    <div class="dact"><button type="button" class="btn2" id="cancel-post">Cancel</button><button type="submit" class="btn1" id="submit-post">Put it on the wall</button></div>
+  </form>
+</div>
+
+<!-- Sign-in dialog -->
+<div class="overlay" id="auth-overlay" hidden>
+  <form class="dlg" id="auth-form" role="dialog" aria-modal="true" aria-labelledby="auth-title" novalidate>
+    <h2 id="auth-title">Sign in</h2>
+    <p class="sub" id="auth-sub">Enter your email and we'll send you a sign-in link. No password needed.</p>
+    <div class="fld"><label for="a-email">Email</label><input type="email" id="a-email" autocomplete="email" placeholder="you@example.com"></div>
+    <p class="err" id="a-err" role="alert"></p>
+    <div class="dact"><button type="button" class="btn2" id="auth-cancel">Close</button><button type="submit" class="btn1" id="auth-send">Email me a link</button></div>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+<noscript><p style="padding:16px">Count Me In needs JavaScript to show the events wall.</p></noscript>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+/* ===== Setup: paste your two Supabase values here (see README.md) ===== */
+var SUPABASE_URL = https://nbtlijfgntqippklgpod.supabase.co/rest/v1/;
+var SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5idGxpamZnbnRxaXBwa2xncG9kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1ODM0NzEsImV4cCI6MjEwODE1OTQ3MX0.u_s-8vhBHTDQ0aAa7H_cDEt7CHcxZ0HUL6l_rW0Scw0;
+/* ====================================================================== */
+
+(function () {
+  var TYPES = [
+    { id: 'quiz', label: 'Pub quiz' }, { id: 'music', label: 'Live music' }, { id: 'games', label: 'Games night' },
+    { id: 'sport', label: 'Sport & fitness' }, { id: 'meetup', label: 'Meetup' }, { id: 'arts', label: 'Arts & craft' },
+    { id: 'food', label: 'Food & drink' }, { id: 'market', label: 'Market' }, { id: 'other', label: 'Something else' }
+  ];
+  var KINDS = { venue: 'Venue', community: 'Community group', person: 'Individual host' };
+  var DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  var $ = function (s) { return document.querySelector(s); };
+  function h(tag, props) {
+    var el = document.createElement(tag);
+    var p = props || {};
+    Object.keys(p).forEach(function (k) {
+      var v = p[k];
+      if (v == null || v === false) return;
+      if (k === 'class') el.className = v;
+      else if (k === 'text') el.textContent = v;
+      else if (k.indexOf('on') === 0) el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? '' : v);
+    });
+    for (var i = 2; i < arguments.length; i++) {
+      [].concat(arguments[i]).forEach(function (kid) { if (kid == null || kid === false) return; el.append(kid.nodeType ? kid : document.createTextNode(kid)); });
+    }
+    return el;
+  }
+
+  function iso(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function pd(s) { var a = s.split('-').map(Number); return new Date(a[0], a[1] - 1, a[2]); }
+  function addDays(n) { var d = new Date(); d.setDate(d.getDate() + n); return iso(d); }
+  var today = iso(new Date());
+  function fmtTime(t) {
+    if (!t) return '';
+    var a = t.split(':').map(Number), H = a[0], M = a[1] || 0;
+    return (H % 12 || 12) + (M ? ':' + String(M).padStart(2, '0') : '') + (H >= 12 ? 'pm' : 'am');
+  }
+  function relDay(s) { if (s === today) return 'Today'; if (s === addDays(1)) return 'Tomorrow'; return null; }
+  function hash(s) { var x = 0; for (var i = 0; i < s.length; i++) x = (x * 31 + s.charCodeAt(i)) | 0; return Math.abs(x); }
+
+  var configured = SUPABASE_URL.indexOf('PASTE_') !== 0 && SUPABASE_ANON_KEY.indexOf('PASTE_') !== 0;
+  var sb = null;
+  var state = {
+    uid: null, email: null, isAdmin: false, loadFailed: false,
+    events: null, mine: {}, myReports: {},
+    f: { type: 'all', area: 'all', when: 'all' }, armed: null, pending: {}
+  };
+  try { var saved = JSON.parse(localStorage.getItem('cmi.filters') || 'null'); if (saved) state.f = Object.assign(state.f, saved); } catch (e) {}
+  function saveFilters() { try { localStorage.setItem('cmi.filters', JSON.stringify(state.f)); } catch (e) {} }
+
+  var toastTimer;
+  function toast(msg) {
+    var t = $('#toast'); t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.hidden = true; }, 3600);
+  }
+  function needSignIn(why) {
+    if (!configured) { toast('Site setup is not finished yet.'); return false; }
+    if (state.uid) return true;
+    openAuth(why);
+    return false;
+  }
+  function areas() {
+    var seen = {}, out = [];
+    (state.events || []).forEach(function (e) {
+      var k = (e.area || '').trim().toLowerCase();
+      if (k && !seen[k]) { seen[k] = 1; out.push({ key: k, label: e.area.trim() }); }
+    });
+    return out.sort(function (a, b) { return a.label.localeCompare(b.label); });
+  }
+
+  /* ---------- data ---------- */
+  function normalise(r) {
+    return { id: r.id, createdBy: r.created_by, title: r.title, type: r.type, area: r.area, venue: r.venue, date: r.event_date,
+      time: r.event_time, description: r.description, hostName: r.host_name, hostKind: r.host_kind, verified: r.verified,
+      going: Number(r.going_count) || 0, interested: Number(r.interested_count) || 0, reports: Number(r.report_count) || 0 };
+  }
+  async function load() {
+    if (!sb) return;
+    var res = await sb.rpc('feed');
+    if (res.error) { state.loadFailed = true; if (!state.events) state.events = []; renderFilters(); renderWall(); return; }
+    state.loadFailed = false;
+    state.events = (res.data || []).map(normalise);
+    state.mine = {}; state.myReports = {};
+    if (state.uid) {
+      var both = await Promise.all([sb.from('rsvps').select('event_id,status'), sb.from('reports').select('event_id')]);
+      (both[0].data || []).forEach(function (r) { state.mine[r.event_id] = r.status; });
+      (both[1].data || []).forEach(function (r) { state.myReports[r.event_id] = true; });
+    }
+    renderFilters(); renderWall();
+  }
+  async function refreshSession(session) {
+    state.uid = session && session.user ? session.user.id : null;
+    state.email = session && session.user ? session.user.email : null;
+    state.isAdmin = false;
+    if (state.uid) { var r = await sb.rpc('is_admin'); state.isAdmin = r.data === true; }
+    renderAccount();
+    await load();
+  }
+
+  /* ---------- rendering ---------- */
+  function renderAccount() {
+    var a = $('#acct'); a.replaceChildren();
+    if (!configured) return;
+    if (state.uid) a.append(h('span', { text: state.email || '' }), h('button', { class: 'link', type: 'button', onclick: signOut, text: 'Sign out' }));
+    else a.append(h('button', { class: 'link', type: 'button', onclick: function () { openAuth(); }, text: 'Sign in' }));
+  }
+  function renderFilters() {
+    var sel = $('#area');
+    var list = areas();
+    if (state.f.area !== 'all' && !list.some(function (a) { return a.key === state.f.area; })) state.f.area = 'all';
+    sel.replaceChildren.apply(sel, [h('option', { value: 'all', text: 'Everywhere' })].concat(list.map(function (a) { return h('option', { value: a.key, text: a.label }); })));
+    sel.value = state.f.area;
+    var dl = $('#area-list');
+    dl.replaceChildren.apply(dl, list.map(function (a) { return h('option', { value: a.label }); }));
+    document.querySelectorAll('#when button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.w === state.f.when)); });
+    var chips = $('#types');
+    var all = [{ id: 'all', label: 'All types' }].concat(TYPES);
+    chips.replaceChildren.apply(chips, all.map(function (t) {
+      return h('button', { type: 'button', class: 'chip', 'aria-pressed': String(state.f.type === t.id), onclick: function () { state.f.type = t.id; saveFilters(); renderFilters(); renderWall(); } },
+        t.id === 'all' ? null : h('i', { style: 'background:var(--band-' + t.id + ')' }), t.label);
+    }));
+  }
+  function visibleEvents() {
+    var weekEnd = addDays(7);
+    return (state.events || []).filter(function (e) {
+      if (!e.date || e.date < today) return false;
+      if (state.f.type !== 'all' && e.type !== state.f.type) return false;
+      if (state.f.area !== 'all' && (e.area || '').trim().toLowerCase() !== state.f.area) return false;
+      if (state.f.when === 'today' && e.date !== today) return false;
+      if (state.f.when === 'week' && e.date > weekEnd) return false;
+      return true;
+    });
+  }
+  function renderNotice() {
+    var n = $('#notice'); n.replaceChildren();
+    if (!configured) n.append(h('div', { class: 'notice bad', text: 'Setup needed: add your Supabase project URL and key near the bottom of index.html. The README explains how.' }));
+    else if (state.loadFailed) n.append(h('div', { class: 'notice bad', text: 'The wall could not load. Check your connection and refresh. If you run this site, check the Supabase setup in the README.' }));
+  }
+  function renderWall() {
+    var wall = $('#wall');
+    var active = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.k : null;
+    wall.replaceChildren();
+    renderNotice();
+    if (state.events === null && configured) {
+      wall.append(h('div', { class: 'empty' }, h('p', { text: 'Loading the wall…' })));
+      $('#count').textContent = ''; $('#clear').hidden = true;
+      return;
+    }
+    var evs = visibleEvents();
+    var filtered = state.f.type !== 'all' || state.f.area !== 'all' || state.f.when !== 'all';
+    $('#clear').hidden = !filtered;
+    $('#count').textContent = configured && !state.loadFailed ? evs.length + (evs.length === 1 ? ' free event' : ' free events') : '';
+    if (!evs.length) {
+      if (!configured || state.loadFailed) return;
+      if (filtered && (state.events || []).length) {
+        wall.append(h('div', { class: 'empty' }, h('h2', { text: 'Nothing matches those filters' }), h('p', { text: 'Try another area or day, or clear the filters.' }),
+          h('button', { class: 'btn2', type: 'button', onclick: clearFilters, text: 'Clear filters' })));
+      } else {
+        wall.append(h('div', { class: 'empty' }, h('h2', { text: 'The wall is empty' }),
+          h('p', { text: 'Nobody has posted yet. Put up the first one: a pub quiz, an open mic, a Sunday kickabout in the park.' }),
+          h('button', { class: 'btn1', type: 'button', onclick: openPost, text: 'I want to post an event' })));
+      }
+      return;
+    }
+    evs.forEach(function (e) { wall.append(card(e)); });
+    if (active) { var el = wall.querySelector('[data-k="' + active + '"]'); if (el) el.focus(); }
+  }
+  function card(e) {
+    var my = state.mine[e.id];
+    var d = pd(e.date);
+    var typeLabel = (TYPES.filter(function (t) { return t.id === e.type; })[0] || TYPES[8]).label;
+    var rel = relDay(e.date);
+    var own = state.uid && e.createdBy === state.uid;
+    var el = h('article', { class: 'card', 'data-type': e.type || 'other' });
+    el.style.setProperty('--rot', (((hash(e.id) % 7) - 3) * 0.35).toFixed(2) + 'deg');
+
+    var statusBtn = function (kind, label) {
+      var pressed = my === kind;
+      return h('button', { type: 'button', class: 'tog ' + (kind === 'going' ? 'go' : 'int'), 'aria-pressed': String(pressed), 'data-k': kind + ':' + e.id,
+        disabled: !!state.pending[e.id], onclick: function () { setStatus(e, kind); } }, pressed ? '✓ ' : '', label);
+    };
+    var foot = h('div', { class: 'foot' });
+    if (own || state.isAdmin) {
+      var dk = 'del:' + e.id;
+      foot.append(h('button', { type: 'button', 'data-k': dk, class: state.armed === dk ? 'armed' : '', onclick: function () { armOr(dk, function () { removeEvent(e); }); }, text: state.armed === dk ? 'Tap again to delete' : 'Delete' }));
+    }
+    if (!own) {
+      var rk = 'rep:' + e.id;
+      foot.append(state.myReports[e.id]
+        ? h('button', { type: 'button', disabled: true, text: 'Reported' })
+        : h('button', { type: 'button', 'data-k': rk, class: state.armed === rk ? 'armed' : '', onclick: function () { armOr(rk, function () { report(e); }); }, text: state.armed === rk ? 'Tap again to report' : 'Report' }));
+    }
+    if (state.isAdmin) foot.append(h('button', { type: 'button', 'data-k': 'ver:' + e.id, onclick: function () { toggleVerified(e); }, text: e.verified ? 'Remove verified' : 'Mark verified' }));
+
+    el.append(
+      h('div', { class: 'band' }, h('span', { text: typeLabel }), h('span', { class: 'free', text: 'Free' })),
+      h('div', { class: 'cbody' },
+        h('div', { class: 'head' },
+          h('div', { class: 'stub' }, h('span', { class: 'dow', text: DOW[d.getDay()] }), h('span', { class: 'day', text: String(d.getDate()) }), h('span', { class: 'mon', text: MON[d.getMonth()] })),
+          h('div', { style: 'min-width:0' },
+            h('h2', { class: 'title', text: e.title }),
+            h('div', { class: 'when', text: (rel ? rel + ' · ' : '') + fmtTime(e.time) }),
+            h('div', { class: 'where', text: [e.venue, e.area].filter(Boolean).join(', ') }))),
+        e.description ? h('p', { class: 'desc', text: e.description, title: e.description }) : null,
+        h('div', { class: 'host' },
+          e.verified ? h('span', { class: 'badge ok', text: '✓ Verified' }) : h('span', { class: 'badge', text: KINDS[e.hostKind] || 'Host' }),
+          h('span', {}, 'by ', h('strong', { text: e.hostName || 'Anonymous' }))),
+        h('div', { class: 'acts' }, statusBtn('interested', 'Interested'), statusBtn('going', "I'm going")),
+        h('div', { class: 'counts' }, h('span', {}, h('b', { text: String(e.going) }), ' going'), h('span', {}, h('b', { text: String(e.interested) }), ' interested')),
+        e.reports && (state.isAdmin || own) ? h('div', { class: 'flag', text: e.reports + (e.reports === 1 ? ' report' : ' reports') + (e.reports >= 3 ? ' · hidden from others' : '') }) : null,
+        foot.children.length ? foot : null));
+    return el;
+  }
+  function armOr(key, fn) {
+    if (state.armed === key) { state.armed = null; fn(); return; }
+    state.armed = key; renderWall();
+    setTimeout(function () { if (state.armed === key) { state.armed = null; renderWall(); } }, 4000);
+  }
+  function clearFilters() { state.f = { type: 'all', area: 'all', when: 'all' }; saveFilters(); renderFilters(); renderWall(); }
+
+  /* ---------- actions ---------- */
+  function fail(err) { console.error(err); toast('That did not work. Please try again.'); }
+
+  async function setStatus(e, kind) {
+    if (!needSignIn(kind === 'going' ? "Sign in so people can see you're going." : 'Sign in to mark events you are interested in.')) return;
+    if (state.pending[e.id]) return;
+    state.pending[e.id] = true;
+    var cur = state.mine[e.id];
+    // Update the screen straight away, then save.
+    if (cur === 'going') e.going--; else if (cur === 'interested') e.interested--;
+    if (cur === kind) delete state.mine[e.id];
+    else { state.mine[e.id] = kind; if (kind === 'going') e.going++; else e.interested++; }
+    renderWall();
+    try {
+      var res = cur === kind
+        ? await sb.from('rsvps').delete().eq('event_id', e.id).eq('user_id', state.uid)
+        : await sb.from('rsvps').upsert({ event_id: e.id, user_id: state.uid, status: kind, updated_at: new Date().toISOString() }, { onConflict: 'event_id,user_id' });
+      if (res.error) throw res.error;
+    } catch (err) { fail(err); }
+    delete state.pending[e.id];
+    await load();
+  }
+  async function report(e) {
+    if (!needSignIn('Sign in to report an event.')) return;
+    var res = await sb.from('reports').insert({ event_id: e.id, user_id: state.uid });
+    if (res.error && res.error.code !== '23505') return fail(res.error);
+    toast('Thanks. Reported for review.');
+    await load();
+  }
+  async function removeEvent(e) {
+    var res = await sb.from('events').delete().eq('id', e.id);
+    if (res.error) return fail(res.error);
+    toast('Event removed.');
+    await load();
+  }
+  async function toggleVerified(e) {
+    var res = await sb.from('events').update({ verified: !e.verified }).eq('id', e.id);
+    if (res.error) return fail(res.error);
+    await load();
+  }
+
+  /* ---------- sign in ---------- */
+  var lastFocus = null;
+  function openAuth(why) {
+    if (!configured) { toast('Site setup is not finished yet.'); return; }
+    lastFocus = document.activeElement;
+    $('#auth-sub').textContent = (why ? why + ' ' : '') + "Enter your email and we'll send you a sign-in link. No password needed.";
+    $('#a-err').textContent = '';
+    $('#auth-send').disabled = false;
+    $('#auth-overlay').hidden = false;
+    $('#a-email').focus();
+  }
+  function closeAuth() { $('#auth-overlay').hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+  async function sendLink(ev) {
+    ev.preventDefault();
+    var email = $('#a-email').value.trim();
+    if (!/^\S+@\S+\.\S+$/.test(email)) { $('#a-err').textContent = 'Enter a valid email address.'; return; }
+    $('#auth-send').disabled = true;
+    var res = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: location.origin + location.pathname } });
+    if (res.error) { $('#a-err').textContent = 'Could not send the link. Wait a minute and try again.'; $('#auth-send').disabled = false; return; }
+    $('#auth-sub').textContent = 'Check your inbox at ' + email + '. Open the link on this device and you will be signed in.';
+    $('#a-err').textContent = '';
+  }
+  async function signOut() { await sb.auth.signOut(); toast('Signed out.'); }
+
+  /* ---------- post dialog ---------- */
+  function openPost() {
+    if (!needSignIn('Sign in to post an event.')) return;
+    lastFocus = document.activeElement;
+    var sel = $('#f-type');
+    if (!sel.options.length) TYPES.forEach(function (t) { sel.append(h('option', { value: t.id, text: t.label })); });
+    $('#f-date').min = today;
+    if (!$('#f-date').value) $('#f-date').value = today;
+    $('#f-err').textContent = '';
+    $('#overlay').hidden = false;
+    $('#f-title').focus();
+  }
+  function closePost() { $('#overlay').hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+  async function submitPost(ev) {
+    ev.preventDefault();
+    var err = $('#f-err');
+    var v = function (id) { return $(id).value.trim(); };
+    var row = {
+      title: v('#f-title'), type: $('#f-type').value, area: v('#f-area'), event_date: $('#f-date').value, event_time: $('#f-time').value,
+      venue: v('#f-venue'), description: v('#f-desc'), host_kind: $('#f-kind').value, host_name: v('#f-host'),
+      is_free: true, created_by: state.uid
+    };
+    var bad = function (msg, sel) { err.textContent = msg; $(sel).focus(); };
+    if (!row.title) return bad('Give the event a name.', '#f-title');
+    if (!row.area) return bad('Add the town or area so people can filter by it.', '#f-area');
+    if (!row.event_date || row.event_date < today) return bad('Pick today or a later date.', '#f-date');
+    if (!row.event_time) return bad('Add a start time.', '#f-time');
+    if (!row.venue) return bad('Say where to find it.', '#f-venue');
+    if (!row.host_name) return bad('Add the name to show on the post.', '#f-host');
+    if (!$('#f-free').checked) return bad('This wall is for free events. Tick the box to confirm.', '#f-free');
+    var btn = $('#submit-post'); btn.disabled = true;
+    var res = await sb.from('events').insert(row);
+    btn.disabled = false;
+    if (res.error) { err.textContent = 'That did not save. Please try again.'; console.error(res.error); return; }
+    ['#f-title', '#f-venue', '#f-desc'].forEach(function (s) { $(s).value = ''; });
+    $('#f-free').checked = false;
+    closePost(); toast('Posted. It is on the wall.');
+    await load();
+  }
+
+  /* ---------- wiring ---------- */
+  $('#open-post').addEventListener('click', openPost);
+  $('#cancel-post').addEventListener('click', closePost);
+  $('#form').addEventListener('submit', submitPost);
+  $('#auth-cancel').addEventListener('click', closeAuth);
+  $('#auth-form').addEventListener('submit', sendLink);
+  $('#overlay').addEventListener('mousedown', function (e) { if (e.target === $('#overlay')) closePost(); });
+  $('#auth-overlay').addEventListener('mousedown', function (e) { if (e.target === $('#auth-overlay')) closeAuth(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if (!$('#overlay').hidden) closePost(); if (!$('#auth-overlay').hidden) closeAuth(); } });
+  $('#area').addEventListener('change', function (e) { state.f.area = e.target.value; saveFilters(); renderWall(); });
+  $('#when').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; state.f.when = b.dataset.w; saveFilters(); renderFilters(); renderWall(); });
+  $('#clear').addEventListener('click', clearFilters);
+
+  renderFilters();
+  renderAccount();
+  renderWall();
+
+  if (configured && window.supabase) {
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    sb.auth.onAuthStateChange(function (event, session) {
+      // Run outside the auth callback so Supabase calls inside it cannot deadlock.
+      setTimeout(function () {
+        refreshSession(session);
+        if (event === 'SIGNED_IN' && !$('#auth-overlay').hidden) closeAuth();
+      }, 0);
+    });
+    // Keep counts fresh while the page is open.
+    setInterval(function () { if (!document.hidden && $('#overlay').hidden) load(); }, 30000);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) load(); });
+  } else if (configured) {
+    state.loadFailed = true; state.events = []; renderWall();
+  }
+})();
+</script>
+</body>
+</html>
