@@ -62,11 +62,11 @@ button { cursor: pointer; }
 
 /* Top bar */
 .bar { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top, 0px); }
-.bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 12px; }
-.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.bar .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 12px; padding-block: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 1 auto; }
 .brand svg { flex: none; color: var(--accent); }
 .brand b { font: 800 26px/1 var(--font-display); letter-spacing: -.02em; white-space: nowrap; }
-.right { display: flex; align-items: center; gap: 14px; }
+.right { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px 14px; flex: 0 1 auto; }
 .acct { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
 .acct span { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .btn-post { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 6px; padding: 11px 16px; font-weight: 700; font-size: 14px; white-space: nowrap; }
@@ -236,7 +236,7 @@ select, input[type=text], input[type=email], input[type=date], input[type=time],
   <section class="how">
     <div><b>Free events only.</b> Anyone can post: venues, clubs, or one person with a football and a park.</div>
     <div><b>Keeping it honest.</b> Venues can be marked Verified by the site team. Three reports take an event off the wall until it is reviewed.</div>
-    <div><a href="privacy.html" style="color:var(--accent)">Privacy policy</a></div>
+    <div><a href="privacy.html" style="color:var(--accent)">Privacy policy</a> &nbsp;·&nbsp; Site version 21 Oct, 16:45</div>
   </section>
 </main>
 
