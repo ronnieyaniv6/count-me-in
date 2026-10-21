@@ -161,6 +161,11 @@ select, input[type=text], input[type=email], input[type=date], input[type=time],
 .dact { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
 .btn2 { background: transparent; border: 1.5px solid var(--ink); border-radius: 6px; padding: 10px 16px; font-weight: 700; }
 .btn1 { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 6px; padding: 11px 18px; font-weight: 700; }
+.btn-google { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; background: #FFFFFF; color: #1F1F1F; border: 1px solid #747775; border-radius: 6px; padding: 11px 14px; font-weight: 700; margin-bottom: 14px; }
+.btn-google:hover { background: #F2F2F2; }
+.or { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+.or::before, .or::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+.or span { flex: none; }
 .btn1[disabled] { opacity: .6; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(18px, env(safe-area-inset-bottom, 0px)); z-index: 60; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 6px; font-weight: 600; font-size: 14px; max-width: calc(100% - 32px); }
 .toast[hidden] { display: none; }
@@ -222,6 +227,7 @@ select, input[type=text], input[type=email], input[type=date], input[type=time],
   <section class="how">
     <div><b>Free events only.</b> Anyone can post: venues, clubs, or one person with a football and a park.</div>
     <div><b>Keeping it honest.</b> Venues can be marked Verified by the site team. Three reports take an event off the wall until it is reviewed.</div>
+    <div><a href="privacy.html" style="color:var(--accent)">Privacy policy</a></div>
   </section>
 </main>
 
@@ -259,7 +265,9 @@ select, input[type=text], input[type=email], input[type=date], input[type=time],
 <div class="overlay" id="auth-overlay" hidden>
   <form class="dlg" id="auth-form" role="dialog" aria-modal="true" aria-labelledby="auth-title" novalidate>
     <h2 id="auth-title">Sign in</h2>
-    <p class="sub" id="auth-sub">Enter your email and we'll send you a sign-in link. No password needed.</p>
+    <p class="sub" id="auth-sub">Sign in to post events and say you're going.</p>
+    <button type="button" class="btn-google" id="google-btn"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2.1 1.4-4.8 2.3-7.7 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Continue with Google</button>
+    <p class="or"><span>or use email</span></p>
     <div class="fld"><label for="a-email">Email</label><input type="email" id="a-email" autocomplete="email" placeholder="you@example.com"></div>
     <p class="err" id="a-err" role="alert"></p>
     <div class="dact"><button type="button" class="btn2" id="auth-cancel">Close</button><button type="submit" class="btn1" id="auth-send">Email me a link</button></div>
@@ -541,7 +549,7 @@ var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
   function openAuth(why) {
     if (!configured) { toast('Site setup is not finished yet.'); return; }
     lastFocus = document.activeElement;
-    $('#auth-sub').textContent = (why ? why + ' ' : '') + "Enter your email and we'll send you a sign-in link. No password needed.";
+    $('#auth-sub').textContent = why || "Sign in to post events and say you're going.";
     $('#a-err').textContent = '';
     $('#auth-send').disabled = false;
     $('#auth-overlay').hidden = false;
@@ -557,6 +565,10 @@ var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
     if (res.error) { $('#a-err').textContent = 'Could not send the link. Wait a minute and try again.'; $('#auth-send').disabled = false; return; }
     $('#auth-sub').textContent = 'Check your inbox at ' + email + '. Open the link on this device and you will be signed in.';
     $('#a-err').textContent = '';
+  }
+  async function googleSignIn() {
+    var res = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname } });
+    if (res.error) $('#a-err').textContent = 'Could not start Google sign-in. Please try again.';
   }
   async function signOut() { await sb.auth.signOut(); toast('Signed out.'); }
 
@@ -606,6 +618,7 @@ var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
   $('#form').addEventListener('submit', submitPost);
   $('#auth-cancel').addEventListener('click', closeAuth);
   $('#auth-form').addEventListener('submit', sendLink);
+  $('#google-btn').addEventListener('click', googleSignIn);
   $('#overlay').addEventListener('mousedown', function (e) { if (e.target === $('#overlay')) closePost(); });
   $('#auth-overlay').addEventListener('mousedown', function (e) { if (e.target === $('#auth-overlay')) closeAuth(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if (!$('#overlay').hidden) closePost(); if (!$('#auth-overlay').hidden) closeAuth(); } });
