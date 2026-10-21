@@ -618,7 +618,11 @@ var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
   renderWall();
 
   if (configured && window.supabase) {
-    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    var store = null;
+    try { localStorage.setItem('cmi.test', '1'); localStorage.removeItem('cmi.test'); store = window.localStorage; } catch (e) {}
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storage: store || undefined }
+    });
     sb.auth.onAuthStateChange(function (event, session) {
       // Run outside the auth callback so Supabase calls inside it cannot deadlock.
       setTimeout(function () {
@@ -626,6 +630,8 @@ var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
         if (event === 'SIGNED_IN' && !$('#auth-overlay').hidden) closeAuth();
       }, 0);
     });
+    // Backup: restore a saved sign-in straight away on page load.
+    sb.auth.getSession().then(function (r) { if (r.data && r.data.session && !state.uid) refreshSession(r.data.session); });
     // Keep counts fresh while the page is open.
     setInterval(function () { if (!document.hidden && $('#overlay').hidden) load(); }, 30000);
     document.addEventListener('visibilitychange', function () { if (!document.hidden) load(); });
